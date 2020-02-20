@@ -1,0 +1,53 @@
+---
+title: "UC Berkeley Admissions Rate"
+date: "20 Feb. 2020"
+author: G. Hirang
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+library(tidyverse)
+library(datasets)
+```
+
+```{r, include=FALSE, message = FALSE, warning=FALSE}
+admissions <- as.data.frame(UCBAdmissions)
+head(admissions)
+
+admissions$Gender <- as.character(admissions$Gender)
+
+gender <- admissions %>% 
+    group_by(Gender, Admit) %>% 
+    summarize(total = sum(Freq))
+
+dept <- admissions %>% 
+    group_by(Dept, Gender, Admit) %>% 
+    summarize(total = sum(Freq)) %>% 
+    spread(Admit, total)
+```
+
+# 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+plot_ly(gender, x = ~Gender, y = ~total, type = 'bar',
+        color = ~Admit) %>% 
+    layout(title = "Admissions by Gender, UC Berkeley", 
+           yaxis = list(title = 'Total'), barmode = 'group')
+```
+
+# 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+plot_ly(dept, x = ~Dept, y = ~Admitted, type = 'bar', name = 'Admitted') %>% 
+    add_trace(y = ~Rejected, name = 'Rejected') %>% 
+    layout(title = "Admissions by Department, UC Berkeley",
+        xaxis = list(title = "", tickangle = -45),
+           yaxis = list(title = ""),
+         barmode = 'group')
+```
+
+# Thank you 
